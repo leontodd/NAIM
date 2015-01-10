@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Net.Sockets;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Web.Script.Serialization;
 
 namespace NAIM
 {
@@ -126,6 +127,45 @@ namespace NAIM
                 else { return false; }
             }
             else { return false; }
+        }
+
+        public string CheckMessages(string username, string password)
+        {
+            if (Authorise(username, password) != false)
+            {
+                DataTable uidCheck = ExecuteQuery("SELECT * FROM " + "users" + " WHERE " + "(" + "username" + "='" + username + "');");
+                if (uidCheck != null)
+                {
+                    string uid = uidCheck.Rows[0].Field<int>(0).ToString();
+                    DataTable conversationCheck = ExecuteQuery("SELECT * FROM " + "conversations" + " WHERE " + "(u_one = '" + uid + "' OR u_two='" + uid + "');");
+                    if (conversationCheck != null)
+                    {
+                        List<Conversation> conCollection = new List<Conversation>();
+                        string query = "(c_id = '" + conversationCheck.Rows[0][0] + "'";
+                        foreach (DataRow d in conversationCheck.Rows)
+                        {
+                            conCollection.Add(new Conversation(d[0].ToString(), d[1].ToString(), d[2].ToString()));
+                            query += " OR c_id='" + d[0] + "'";
+                        }
+                        query += ")";
+
+                        DataTable messageCheck = ExecuteQuery("SELECT * FROM " + "messages" + " WHERE " + query + ";");
+                        foreach (Conversation c in conCollection)
+                        {
+                            DataRow[] result = messageCheck.Select("c_id = '" + c.cid + "'");
+                            foreach (DataRow d in result)
+                            {
+                                c.messages.Add(new Message(d[1].ToString(), d[3].ToString(), d[4].ToString()));
+                            }
+                        }
+                        string json = new JavaScriptSerializer().Serialize(conCollection);
+                        return json;
+                    }
+                    else { return null; }
+                }
+                else { return null; }
+            }
+            else { return null; }
         }
     }
 }

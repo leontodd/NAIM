@@ -16,7 +16,9 @@ namespace NAIM
             DatabaseInterface db = new DatabaseInterface("credentials.txt");
             //db.RegisterUser("jhawsh", "barbers", "rekt@rekt.com");
             //db.UnregisterUser("leontodd", "barbers");
-            db.SendMessage("leontodd", "barbers", "you just got rekt", "jhawsh");
+            //db.SendMessage("jhawsh", "barbers", "wasteman", "leontodd");
+            //string json = db.CheckMessages("leontodd", "barbers");
+
             Console.ReadLine();
         }
     }
@@ -70,14 +72,15 @@ namespace NAIM
                             Array.Copy(message, 31, clientPassword, 0, 64);
                             Array.Copy(message, 95, clientEmail, 0, 60);
                             db.RegisterUser(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim(), e.GetString(clientEmail).Trim());
-                            Console.WriteLine("New user registration: " + clientUsername);
+                            Console.WriteLine("New user registration: " + e.GetString(clientUsername).Trim());
                             break;
                         case 0x14:
                             // Recieved an unregister request
                             clientUsername = new byte[30]; clientPassword = new byte[64];
                             Array.Copy(message, 1, clientUsername, 0, 30);
                             Array.Copy(message, 31, clientPassword, 0, 64);
-                            // TODO: Database interface here
+                            db.UnregisterUser(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
+                            Console.WriteLine("User unregistered: " + e.GetString(clientUsername).Trim());
                             break;
                         case 0x1E:
                             // Recieved a check messages request
@@ -85,13 +88,32 @@ namespace NAIM
                             Array.Copy(message, 1, clientUsername, 0, 30);
                             Array.Copy(message, 31, clientPassword, 0, 64);
                             // TODO: Database interface here
+                            string jsonString = db.CheckMessages(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
+                            Console.WriteLine("Messages checked: " + e.GetString(clientUsername).Trim());
+
+                            if (jsonString != null)
+                            {
+                                byte[] id = new byte[1] { 0x32 };
+                                byte[] json = e.GetBytes(jsonString);
+                                byte[] l = BitConverter.GetBytes(1 + json.Length);
+                                byte[] buffer = new byte[5 + json.Length];
+                                Buffer.BlockCopy(l, 0, buffer, 0, 4);
+                                Buffer.BlockCopy(id, 0, buffer, 4, 1);
+                                Buffer.BlockCopy(json, 0, buffer, 5, json.Length);
+                                clientStream.Write(buffer, 0, buffer.Length);
+                                Console.WriteLine("Messages found and sent");
+                            }
+                            else { Console.WriteLine("No messages found"); }
                             break;
                         case 0x28:
                             // Recieved a send message request
-                            clientUsername = new byte[30]; clientPassword = new byte[64];
+                            clientUsername = new byte[30]; clientPassword = new byte[64]; byte[] content = new byte[packetSize - 125]; byte[] reciever = new byte[30];
                             Array.Copy(message, 1, clientUsername, 0, 30);
                             Array.Copy(message, 31, clientPassword, 0, 64);
-                            // TODO: Database interface here
+                            Array.Copy(message, 95, reciever, 0, 30);
+                            Array.Copy(message, 125, content, 0, packetSize - 125);
+                            db.SendMessage(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim(), e.GetString(content).Trim(), e.GetString(reciever).Trim());
+                            Console.WriteLine("Message sent: " + e.GetString(clientUsername).Trim() + " --> " + e.GetString(reciever).Trim());
                             break;
                     }
                 }
