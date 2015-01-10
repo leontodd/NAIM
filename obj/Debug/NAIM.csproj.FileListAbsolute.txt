@@ -1,0 +1,8 @@
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM\bin\Debug\NAIM.exe.config
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM\obj\Debug\NAIM.csprojResolveAssemblyReference.cache
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM\bin\Debug\NAIM.exe
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM\bin\Debug\NAIM.pdb
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM\bin\Debug\MySql.Data.dll
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM\obj\Debug\NAIM.exe
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM\obj\Debug\NAIM.pdb
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM\bin\Debug\credentials.txt

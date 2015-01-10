@@ -12,7 +12,9 @@ namespace NAIM
     {
         static void Main(string[] args)
         {
-            Server s = new Server();
+            //Server s = new Server();
+            DatabaseInterface db = new DatabaseInterface("credentials.txt");
+            db.UnregisterUser("leontodd", "barbers");
             Console.ReadLine();
         }
     }
@@ -43,6 +45,7 @@ namespace NAIM
         private void Communicate(object client)
         {
             Encoding e = new UTF8Encoding(true, true);
+            DatabaseInterface db = new DatabaseInterface("credentials.txt");
             TcpClient tcpClient = (TcpClient)client;
             NetworkStream clientStream = tcpClient.GetStream();
             BinaryReader br = new BinaryReader(clientStream);
@@ -56,7 +59,7 @@ namespace NAIM
                     int packetSize = BitConverter.ToInt32(br.ReadBytes(4), 0);
                     byte[] message = new byte[packetSize];
                     bytesRead = clientStream.Read(message, 0, message.Length);
-                    switch(message[0])
+                    switch (message[0])
                     {
                         case 0xA:
                             // Recieved a register request
@@ -64,7 +67,8 @@ namespace NAIM
                             Array.Copy(message, 1, clientUsername, 0, 30);
                             Array.Copy(message, 31, clientPassword, 0, 64);
                             Array.Copy(message, 95, clientEmail, 0, 60);
-                            // TODO: Database interface here
+                            db.RegisterUser(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim(), e.GetString(clientEmail).Trim());
+                            Console.WriteLine("New user registration: " + clientUsername);
                             break;
                         case 0x14:
                             // Recieved an unregister request
