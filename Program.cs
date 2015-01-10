@@ -52,9 +52,42 @@ namespace NAIM
                 bytesRead = 0;
                 try
                 {
+                    byte[] clientUsername, clientPassword, clientEmail;
                     int packetSize = BitConverter.ToInt32(br.ReadBytes(4), 0);
                     byte[] message = new byte[packetSize];
                     bytesRead = clientStream.Read(message, 0, message.Length);
+                    switch(message[0])
+                    {
+                        case 0xA:
+                            // Recieved a register request
+                            clientUsername = new byte[30]; clientPassword = new byte[64]; clientEmail = new byte[60];
+                            Array.Copy(message, 1, clientUsername, 0, 30);
+                            Array.Copy(message, 31, clientPassword, 0, 64);
+                            Array.Copy(message, 95, clientEmail, 0, 60);
+                            // TODO: Database interface here
+                            break;
+                        case 0x14:
+                            // Recieved an unregister request
+                            clientUsername = new byte[30]; clientPassword = new byte[64];
+                            Array.Copy(message, 1, clientUsername, 0, 30);
+                            Array.Copy(message, 31, clientPassword, 0, 64);
+                            // TODO: Database interface here
+                            break;
+                        case 0x1E:
+                            // Recieved a check messages request
+                            clientUsername = new byte[30]; clientPassword = new byte[64];
+                            Array.Copy(message, 1, clientUsername, 0, 30);
+                            Array.Copy(message, 31, clientPassword, 0, 64);
+                            // TODO: Database interface here
+                            break;
+                        case 0x28:
+                            // Recieved a send message request
+                            clientUsername = new byte[30]; clientPassword = new byte[64];
+                            Array.Copy(message, 1, clientUsername, 0, 30);
+                            Array.Copy(message, 31, clientPassword, 0, 64);
+                            // TODO: Database interface here
+                            break;
+                    }
                 }
                 catch (Exception ex)
                 {
