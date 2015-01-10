@@ -98,5 +98,34 @@ namespace NAIM
             }
             else { return false; }
         }
+
+        public bool SendMessage(string username, string password, string content, string reciever)
+        {
+            if (Authorise(username, password) != false)
+            {
+                DataTable uid1Check = ExecuteQuery("SELECT * FROM " + "users" + " WHERE " + "(" + "username" + "='" + username + "');");
+                if (uid1Check != null)
+                {
+                    string uid1 = uid1Check.Rows[0].Field<int>(0).ToString();
+                    DataTable uid2Check = ExecuteQuery("SELECT * FROM " + "users" + " WHERE " + "(" + "username" + "='" + reciever + "');");
+                    if (uid1Check != null)
+                    {
+                        string uid2 = uid2Check.Rows[0].Field<int>(0).ToString();
+                        DataTable cidCheck = ExecuteQuery("SELECT * FROM " + "conversations" + " WHERE " + "(u_one = '" + uid1 + "' AND u_two='" + uid2 + "') OR  (u_one = '" + uid2 + "' AND u_two='" + uid1 + "');");
+                        while(cidCheck == null)
+                        {
+                            ExecuteQuery("INSERT INTO conversations (u_one, u_two) VALUES ('" + uid1 + "', '" + uid2 + "');");
+                            cidCheck = ExecuteQuery("SELECT * FROM " + "conversations" + " WHERE " + "(u_one = '" + uid1 + "' AND u_two='" + uid2 + "') OR  (u_one = '" + uid2 + "' AND u_two='" + uid1 + "');");
+                        }
+                        string cid = cidCheck.Rows[0].Field<int>(0).ToString();
+                        ExecuteQuery("INSERT INTO messages (content, c_id, u_id) VALUES ('" + content + "', '" + cid + "', '" + uid1 + "');");
+                        return true;
+                    }
+                    else { return false; }
+                }
+                else { return false; }
+            }
+            else { return false; }
+        }
     }
 }
