@@ -1,6 +1,0 @@
-c:\users\leon\documents\visual studio 2013\Projects\NAIM\NAIM\bin\Debug\NAIM.exe.config
-c:\users\leon\documents\visual studio 2013\Projects\NAIM\NAIM\obj\Debug\NAIM.csprojResolveAssemblyReference.cache
-c:\users\leon\documents\visual studio 2013\Projects\NAIM\NAIM\bin\Debug\NAIM.exe
-c:\users\leon\documents\visual studio 2013\Projects\NAIM\NAIM\bin\Debug\NAIM.pdb
-c:\users\leon\documents\visual studio 2013\Projects\NAIM\NAIM\obj\Debug\NAIM.exe
-c:\users\leon\documents\visual studio 2013\Projects\NAIM\NAIM\obj\Debug\NAIM.pdb

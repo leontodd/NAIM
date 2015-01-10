@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 
-namespace im_server
+namespace NAIM
 {
     class Program
     {
