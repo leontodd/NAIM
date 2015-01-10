@@ -60,9 +60,6 @@
     <Content Include="lib\MySql.Data.Entity.EF6.dll" />
     <Content Include="lib\MySql.Fabric.Plugin.dll" />
     <Content Include="lib\MySql.Web.dll" />
-    <Content Include="credentials.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -12,8 +12,8 @@ namespace NAIM
     {
         static void Main(string[] args)
         {
-            //Server s = new Server();
-            DatabaseInterface db = new DatabaseInterface("credentials.txt");
+            Server s = new Server();
+            //DatabaseInterface db = new DatabaseInterface("credentials.txt");
             //db.RegisterUser("jhawsh", "barbers", "rekt@rekt.com");
             //db.UnregisterUser("leontodd", "barbers");
             //db.SendMessage("jhawsh", "barbers", "wasteman", "leontodd");
