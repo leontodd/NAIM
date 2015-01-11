@@ -66,7 +66,7 @@ namespace NAIM
                 this.CloseConnection();
                 if (data.Rows.Count != 0) { return data; } else { return null; }
             }
-            else { return null; }
+            else { throw new Exception("Unable to connect to central database."); }
         }
 
         public bool Authorise(string username, string password)
@@ -87,7 +87,7 @@ namespace NAIM
                 ExecuteQuery("INSERT INTO users (username, password, email) VALUES ('" + username + "', '" + password + "', '" + email + "');");
                 return true;
             }
-            else { return false; }
+            else { throw new Exception("Registration failed, username already exists."); }
         }
 
         public bool UnregisterUser(string username, string password)
@@ -97,7 +97,7 @@ namespace NAIM
                 ExecuteQuery("DELETE FROM " + "users" + " WHERE " + "username" + "='" + username + "';");
                 return true;
             }
-            else { return false; }
+            else { throw new Exception("Unregistration failed, unable to authorise user."); }
         }
 
         public bool SendMessage(string username, string password, string content, string reciever)
@@ -109,7 +109,7 @@ namespace NAIM
                 {
                     string uid1 = uid1Check.Rows[0].Field<int>(0).ToString();
                     DataTable uid2Check = ExecuteQuery("SELECT * FROM " + "users" + " WHERE " + "(" + "username" + "='" + reciever + "');");
-                    if (uid1Check != null)
+                    if (uid2Check != null)
                     {
                         string uid2 = uid2Check.Rows[0].Field<int>(0).ToString();
                         DataTable cidCheck = ExecuteQuery("SELECT * FROM " + "conversations" + " WHERE " + "(u_one = '" + uid1 + "' AND u_two='" + uid2 + "') OR  (u_one = '" + uid2 + "' AND u_two='" + uid1 + "');");
@@ -122,11 +122,11 @@ namespace NAIM
                         ExecuteQuery("INSERT INTO messages (content, c_id, u_id) VALUES ('" + content + "', '" + cid + "', '" + uid1 + "');");
                         return true;
                     }
-                    else { return false; }
+                    else { throw new Exception("Sending failed, unable to verify recipient."); }
                 }
-                else { return false; }
+                else { throw new Exception("Sending failed, unable to verify user."); }
             }
-            else { return false; }
+            else { throw new Exception("Sending failed, unable to authorise user."); }
         }
 
         public string CheckMessages(string username, string password)
@@ -163,9 +163,9 @@ namespace NAIM
                     }
                     else { return null; }
                 }
-                else { return null; }
+                else { throw new Exception("Syncing failed, unable to verify user."); }
             }
-            else { return null; }
+            else { throw new Exception("Syncing failed, unable to authorise user."); }
         }
     }
 }

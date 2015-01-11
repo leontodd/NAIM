@@ -13,12 +13,6 @@ namespace NAIM
         static void Main(string[] args)
         {
             Server s = new Server();
-            //DatabaseInterface db = new DatabaseInterface("credentials.txt");
-            //db.RegisterUser("jhawsh", "barbers", "rekt@rekt.com");
-            //db.UnregisterUser("leontodd", "barbers");
-            //db.SendMessage("jhawsh", "barbers", "wasteman", "leontodd");
-            //string json = db.CheckMessages("leontodd", "barbers");
-
             Console.ReadLine();
         }
     }
@@ -71,23 +65,30 @@ namespace NAIM
                             Array.Copy(message, 1, clientUsername, 0, 30);
                             Array.Copy(message, 31, clientPassword, 0, 64);
                             Array.Copy(message, 95, clientEmail, 0, 60);
-                            db.RegisterUser(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim(), e.GetString(clientEmail).Trim());
-                            Console.WriteLine("New user registration: " + e.GetString(clientUsername).Trim());
+                            try
+                            {
+                                db.RegisterUser(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim(), e.GetString(clientEmail).Trim());
+                                SendStatusReply(clientStream, true, "Registration successful.");
+                            }
+                            catch (Exception ex) { SendStatusReply(clientStream, false, ex.Message); }
                             break;
                         case 0x14:
                             // Recieved an unregister request
                             clientUsername = new byte[30]; clientPassword = new byte[64];
                             Array.Copy(message, 1, clientUsername, 0, 30);
                             Array.Copy(message, 31, clientPassword, 0, 64);
-                            db.UnregisterUser(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
-                            Console.WriteLine("User unregistered: " + e.GetString(clientUsername).Trim());
+                            try
+                            {
+                                db.UnregisterUser(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
+                                SendStatusReply(clientStream, true, "Unregistration successful.");
+                            }
+                            catch (Exception ex) { SendStatusReply(clientStream, false, ex.Message); }
                             break;
                         case 0x1E:
                             // Recieved a check messages request
                             clientUsername = new byte[30]; clientPassword = new byte[64];
                             Array.Copy(message, 1, clientUsername, 0, 30);
                             Array.Copy(message, 31, clientPassword, 0, 64);
-                            // TODO: Database interface here
                             string jsonString = db.CheckMessages(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
                             Console.WriteLine("Messages checked: " + e.GetString(clientUsername).Trim());
 
@@ -128,6 +129,21 @@ namespace NAIM
                 }
             }
             tcpClient.Close();
+        }
+
+        private void SendStatusReply(NetworkStream clientStream, bool statusS, string messageS = "")
+        {
+            Encoding e = new UTF8Encoding(true, true);
+            byte[] id = new byte[1] { 0x3C };
+            byte[] status = new byte[] { Convert.ToByte(statusS) };
+            byte[] message = e.GetBytes(messageS);
+            byte[] l = BitConverter.GetBytes(2 + message.Length);
+            byte[] buffer = new byte[3 + message.Length];
+            Buffer.BlockCopy(l, 0, buffer, 0, 4);
+            Buffer.BlockCopy(id, 0, buffer, 4, 1);
+            Buffer.BlockCopy(status, 0, buffer, 5, 1);
+            Buffer.BlockCopy(message, 0, buffer, 6, message.Length);
+            clientStream.Write(buffer, 0, buffer.Length);
         }
     }
 }
