@@ -13,7 +13,10 @@ namespace NAIM_Client
         static void Main(string[] args)
         {
             ClientInterface connection = new ClientInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1997));
-            connection.Register("bobby", "bobbyp", "bobby@gmail.com");
+            //connection.Register("bobby", "bobbyp", "bobby@gmail.com");
+            //connection.Unregister("bobby", "bobbyp");
+            //connection.SendMessage("leontodd", "barbers", "gtfo", "jhawsh");
+            //List<Conversation> conCollection = connection.CheckMessages("leontodd", "barbers");
             Console.ReadLine();
         }
     }

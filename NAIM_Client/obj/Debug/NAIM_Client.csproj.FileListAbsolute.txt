@@ -3,3 +3,4 @@ C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_Client\bin\Debug\N
 C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_Client\bin\Debug\NAIM_Client.pdb
 C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_Client\obj\Debug\NAIM_Client.exe
 C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_Client\obj\Debug\NAIM_Client.pdb
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_Client\obj\Debug\NAIM_Client.csprojResolveAssemblyReference.cache
