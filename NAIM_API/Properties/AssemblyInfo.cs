@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NAIM_Client")]
+[assembly: AssemblyTitle("NAIM_API")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NAIM_Client")]
+[assembly: AssemblyProduct("NAIM_API")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8364e7d3-d5ee-4785-85c2-5060c8116be7")]
+[assembly: Guid("e2dcff77-a559-4a37-904b-16bee240f1b3")]
 
 // Version information for an assembly consists of the following four values:
 //
