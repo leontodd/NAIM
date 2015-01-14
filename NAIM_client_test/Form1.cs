@@ -22,12 +22,22 @@ namespace NAIM_client_test
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //try
-            //{
+            try
+            {
                 client.Authorise(username.Text, password.Text);
                 MessageBox.Show("Authorised.");
-            //}
-            //catch (Exception ex) { MessageBox.Show(ex.Message); }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                client.Register(usernameR.Text, passwordR.Text, emailR.Text);
+                MessageBox.Show("Registered, please log in.");
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
     }
 }

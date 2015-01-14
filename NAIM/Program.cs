@@ -89,23 +89,27 @@ namespace NAIM
                             clientUsername = new byte[30]; clientPassword = new byte[64];
                             Array.Copy(message, 1, clientUsername, 0, 30);
                             Array.Copy(message, 31, clientPassword, 0, 64);
-                            string jsonString = db.CheckMessages(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
-
-                            if (jsonString != null)
+                            try
                             {
-                                byte[] id = new byte[1] { 0x32 };
-                                byte[] json = e.GetBytes(jsonString);
-                                byte[] l = BitConverter.GetBytes(1 + json.Length);
-                                byte[] buffer = new byte[5 + json.Length];
-                                Buffer.BlockCopy(l, 0, buffer, 0, 4);
-                                Buffer.BlockCopy(id, 0, buffer, 4, 1);
-                                Buffer.BlockCopy(json, 0, buffer, 5, json.Length);
-                                clientStream.Write(buffer, 0, buffer.Length);
+                                string jsonString = db.CheckMessages(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
+                                if (jsonString != null)
+                                {
+                                    byte[] id = new byte[1] { 0x32 };
+                                    byte[] json = e.GetBytes(jsonString);
+                                    byte[] l = BitConverter.GetBytes(1 + json.Length);
+                                    byte[] buffer = new byte[5 + json.Length];
+                                    Buffer.BlockCopy(l, 0, buffer, 0, 4);
+                                    Buffer.BlockCopy(id, 0, buffer, 4, 1);
+                                    Buffer.BlockCopy(json, 0, buffer, 5, json.Length);
+                                    clientStream.Write(buffer, 0, buffer.Length);
+                                }
+                                else
+                                {
+                                    SendStatusReply(clientStream, false, "No messages");
+                                }
                             }
-                            else
-                            {
-                                SendStatusReply(clientStream, false, "No messages");
-                            }
+                            catch (NAIMException ex) { SendStatusReply(clientStream, false, ex.Message); }
+                            
                             break;
                         case 0x28:
                             // Recieved a send message request
@@ -136,7 +140,7 @@ namespace NAIM
                             break;
                     }
                 }
-                catch (TypeUnloadedException ex)
+                catch (Exception ex)
                 {
                     break;
                 }

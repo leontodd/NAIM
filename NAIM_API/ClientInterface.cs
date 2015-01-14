@@ -41,7 +41,7 @@ namespace NAIM_API
             byte[] id = new byte[1] { 0xA };
             byte[] username = e.GetBytes(usernameS.PadRight(30));
             byte[] password = e.GetBytes(passwordS.PadRight(64));
-            byte[] email = e.GetBytes(passwordS.PadRight(60));
+            byte[] email = e.GetBytes(emailS.PadRight(60));
             int length = id.Length + username.Length + password.Length + email.Length;
             byte[] l = BitConverter.GetBytes(length);
 
@@ -61,7 +61,7 @@ namespace NAIM_API
             if (message[0] == 0x3C)
             {
                 if (Convert.ToBoolean(message[1]) == true) { return true; }
-                else { throw new NAIMException(e.GetString(message, 2, message.Length)); }
+                else { throw new NAIMException(e.GetString(message, 2, message.Length - 2)); }
             }
             else { throw new NAIMException("Network connection problem."); }
         }
@@ -89,7 +89,7 @@ namespace NAIM_API
             if (message[0] == 0x3C)
             {
                 if (Convert.ToBoolean(message[1]) == true) { return true; }
-                else { throw new NAIMException(e.GetString(message, 2, message.Length)); }
+                else { throw new NAIMException(e.GetString(message, 2, message.Length - 2)); }
             }
             else { throw new NAIMException("Network connection problem."); }
         }
@@ -124,7 +124,11 @@ namespace NAIM_API
             if (message[0] == 0x3C)
             {
                 if (Convert.ToBoolean(message[1]) == true) { return true; }
-                else { throw new NAIMException(e.GetString(message, 2, message.Length)); }
+                else
+                {
+                    string status = e.GetString(message, 2, message.Length - 2); 
+                    throw new NAIMException(status);
+                }
             }
             else { throw new NAIMException("Network connection problem."); }
         }
@@ -156,7 +160,7 @@ namespace NAIM_API
             if (message[0] == 0x3C)
             {
                 if (Convert.ToBoolean(message[1]) == true) { return true; }
-                else { throw new NAIMException(e.GetString(message, 2, message.Length)); }
+                else { throw new NAIMException(e.GetString(message, 2, message.Length - 2)); }
             }
             else { throw new NAIMException("Network connection problem."); }
         }
@@ -189,7 +193,7 @@ namespace NAIM_API
             }
             else if (message[0] == 0x3C)
             {
-                throw new NAIMException(e.GetString(message, 2, message.Length));
+                throw new NAIMException(e.GetString(message, 2, message.Length - 2));
             }
             else { throw new NAIMException("Network connection problem."); }
         }
