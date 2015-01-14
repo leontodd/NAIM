@@ -19,5 +19,22 @@ namespace NAIM
         public Message() { }
         public Message(string _content, string _user, string _time) { content = _content; user = _user; time = _time; }
         public string content, user, time;
-    };
+    }
+
+    class NAIMException : Exception
+    {
+        public NAIMException()
+        {
+        }
+
+        public NAIMException(string message)
+            : base(message)
+        {
+        }
+
+        public NAIMException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+    }
 }

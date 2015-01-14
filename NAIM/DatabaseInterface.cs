@@ -18,7 +18,7 @@ namespace NAIM
         {
             string[] credentials = new string[0];
             try { credentials = File.ReadAllLines(credentialsPath); }
-            catch (Exception e) { Console.WriteLine("DB credential error"); Console.ReadLine(); Environment.Exit(0); }
+            catch (Exception ex) { Console.WriteLine("DB credential error"); Console.ReadLine(); Environment.Exit(0); }
 
             string connectionString;
             connectionString = "SERVER=" + credentials[0] + ";" + "DATABASE=" +
@@ -66,7 +66,7 @@ namespace NAIM
                 this.CloseConnection();
                 if (data.Rows.Count != 0) { return data; } else { return null; }
             }
-            else { throw new Exception("Unable to connect to central database."); }
+            else { throw new NAIMException("Unable to connect to central database."); }
         }
 
         public bool Authorise(string username, string password)
@@ -76,7 +76,7 @@ namespace NAIM
             {
                 return true;
             }
-            else { return false; }
+            else { throw new NAIMException("Unable to authorise user."); }
         }
 
         public bool RegisterUser(string username, string password, string email)
@@ -87,7 +87,7 @@ namespace NAIM
                 ExecuteQuery("INSERT INTO users (username, password, email) VALUES ('" + username + "', '" + password + "', '" + email + "');");
                 return true;
             }
-            else { throw new Exception("Registration failed, username already exists."); }
+            else { throw new NAIMException("Registration failed, username already exists."); }
         }
 
         public bool UnregisterUser(string username, string password)
@@ -97,7 +97,7 @@ namespace NAIM
                 ExecuteQuery("DELETE FROM " + "users" + " WHERE " + "username" + "='" + username + "';");
                 return true;
             }
-            else { throw new Exception("Unregistration failed, unable to authorise user."); }
+            else { throw new NAIMException("Unregistration failed, unable to authorise user."); }
         }
 
         public bool SendMessage(string username, string password, string content, string reciever)
@@ -122,11 +122,11 @@ namespace NAIM
                         ExecuteQuery("INSERT INTO messages (content, c_id, u_id) VALUES ('" + content + "', '" + cid + "', '" + uid1 + "');");
                         return true;
                     }
-                    else { throw new Exception("Sending failed, unable to verify recipient."); }
+                    else { throw new NAIMException("Sending failed, unable to verify recipient."); }
                 }
-                else { throw new Exception("Sending failed, unable to verify user."); }
+                else { throw new NAIMException("Sending failed, unable to verify user."); }
             }
-            else { throw new Exception("Sending failed, unable to authorise user."); }
+            else { throw new NAIMException("Sending failed, unable to authorise user."); }
         }
 
         public string CheckMessages(string username, string password)
@@ -163,9 +163,9 @@ namespace NAIM
                     }
                     else { return null; }
                 }
-                else { throw new Exception("Syncing failed, unable to verify user."); }
+                else { throw new NAIMException("Syncing failed, unable to verify user."); }
             }
-            else { throw new Exception("Syncing failed, unable to authorise user."); }
+            else { throw new NAIMException("Syncing failed, unable to authorise user."); }
         }
     }
 }

@@ -1,0 +1,4 @@
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_API\bin\Debug\NAIM_API.dll
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_API\bin\Debug\NAIM_API.pdb
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_API\obj\Debug\NAIM_API.dll
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_API\obj\Debug\NAIM_API.pdb

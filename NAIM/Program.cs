@@ -28,7 +28,7 @@ namespace NAIM
             this.listenThread = new Thread(new ThreadStart(Listen));
             this.listenThread.Start();
         }
-
+        
         private void Listen()
         {
             this.tcpListener.Start();
@@ -70,7 +70,7 @@ namespace NAIM
                                 db.RegisterUser(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim(), e.GetString(clientEmail).Trim());
                                 SendStatusReply(clientStream, true, "Registration successful.");
                             }
-                            catch (Exception ex) { SendStatusReply(clientStream, false, ex.Message); }
+                            catch (NAIMException ex) { SendStatusReply(clientStream, false, ex.Message); }
                             break;
                         case 0x14:
                             // Recieved an unregister request
@@ -82,7 +82,7 @@ namespace NAIM
                                 db.UnregisterUser(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
                                 SendStatusReply(clientStream, true, "Unregistration successful.");
                             }
-                            catch (Exception ex) { SendStatusReply(clientStream, false, ex.Message); }
+                            catch (NAIMException ex) { SendStatusReply(clientStream, false, ex.Message); }
                             break;
                         case 0x1E:
                             // Recieved a check messages request
@@ -90,7 +90,6 @@ namespace NAIM
                             Array.Copy(message, 1, clientUsername, 0, 30);
                             Array.Copy(message, 31, clientPassword, 0, 64);
                             string jsonString = db.CheckMessages(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
-                            Console.WriteLine("Messages checked: " + e.GetString(clientUsername).Trim());
 
                             if (jsonString != null)
                             {
@@ -102,9 +101,11 @@ namespace NAIM
                                 Buffer.BlockCopy(id, 0, buffer, 4, 1);
                                 Buffer.BlockCopy(json, 0, buffer, 5, json.Length);
                                 clientStream.Write(buffer, 0, buffer.Length);
-                                Console.WriteLine("Messages found and sent");
                             }
-                            else { Console.WriteLine("No messages found"); }
+                            else
+                            {
+                                SendStatusReply(clientStream, false, "No messages");
+                            }
                             break;
                         case 0x28:
                             // Recieved a send message request
@@ -113,12 +114,29 @@ namespace NAIM
                             Array.Copy(message, 31, clientPassword, 0, 64);
                             Array.Copy(message, 95, reciever, 0, 30);
                             Array.Copy(message, 125, content, 0, packetSize - 125);
-                            db.SendMessage(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim(), e.GetString(content).Trim(), e.GetString(reciever).Trim());
-                            Console.WriteLine("Message sent: " + e.GetString(clientUsername).Trim() + " --> " + e.GetString(reciever).Trim());
+                            try
+                            {
+                                db.SendMessage(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim(), e.GetString(content).Trim(), e.GetString(reciever).Trim());
+                                SendStatusReply(clientStream, true, "Sending successful.");
+                            }
+                            catch (NAIMException ex) { SendStatusReply(clientStream, false, ex.Message); }
+                            break;
+
+                        case 0x46:
+                            // Recieved an authorisation request
+                            clientUsername = new byte[30]; clientPassword = new byte[64];
+                            Array.Copy(message, 1, clientUsername, 0, 30);
+                            Array.Copy(message, 31, clientPassword, 0, 64);
+                            try
+                            {
+                                db.Authorise(e.GetString(clientUsername).Trim(), e.GetString(clientPassword).Trim());
+                                SendStatusReply(clientStream, true, "Authorisation successful.");
+                            }
+                            catch (NAIMException ex) { SendStatusReply(clientStream, false, ex.Message); }
                             break;
                     }
                 }
-                catch (Exception ex)
+                catch (TypeUnloadedException ex)
                 {
                     break;
                 }
@@ -138,7 +156,7 @@ namespace NAIM
             byte[] status = new byte[] { Convert.ToByte(statusS) };
             byte[] message = e.GetBytes(messageS);
             byte[] l = BitConverter.GetBytes(2 + message.Length);
-            byte[] buffer = new byte[3 + message.Length];
+            byte[] buffer = new byte[6 + message.Length];
             Buffer.BlockCopy(l, 0, buffer, 0, 4);
             Buffer.BlockCopy(id, 0, buffer, 4, 1);
             Buffer.BlockCopy(status, 0, buffer, 5, 1);
