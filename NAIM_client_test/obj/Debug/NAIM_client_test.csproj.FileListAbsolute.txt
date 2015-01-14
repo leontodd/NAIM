@@ -9,3 +9,4 @@ C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_client_test\bin\De
 C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_client_test\bin\Debug\NAIM_API.pdb
 C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_client_test\obj\Debug\NAIM_client_test.exe
 C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_client_test\obj\Debug\NAIM_client_test.pdb
+C:\Users\Leon\Documents\Visual Studio 2013\Projects\NAIM\NAIM_client_test\obj\Debug\NAIM_client_test.Form2.resources

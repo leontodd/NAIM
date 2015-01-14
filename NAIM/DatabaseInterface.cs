@@ -69,6 +69,26 @@ namespace NAIM
             else { throw new NAIMException("Unable to connect to central database."); }
         }
 
+        private string UsernameLookup(string uid)
+        {
+            DataTable userCheck = ExecuteQuery("SELECT * FROM " + "users" + " WHERE " + "(" + "u_id" + "='" + uid + "');");
+            if (userCheck != null)
+            {
+                return userCheck.Rows[0].Field<string>(1);
+            }
+            else { return null; }
+        }
+
+        private string UidLookup(string username)
+        {
+            DataTable userCheck = ExecuteQuery("SELECT * FROM " + "users" + " WHERE " + "(" + "username" + "='" + username + "');");
+            if (userCheck != null)
+            {
+                return userCheck.Rows[0].Field<string>(0);
+            }
+            else { return null; }
+        }
+
         public bool Authorise(string username, string password)
         {
             DataTable authCheck = ExecuteQuery("SELECT * FROM " + "users" + " WHERE " + "(" + "username" + "='" + username + "' AND password='" + password + "');");
@@ -144,7 +164,7 @@ namespace NAIM
                         string query = "(c_id = '" + conversationCheck.Rows[0][0] + "'";
                         foreach (DataRow d in conversationCheck.Rows)
                         {
-                            conCollection.Add(new Conversation(d[0].ToString(), d[1].ToString(), d[2].ToString()));
+                            conCollection.Add(new Conversation(d[0].ToString(), UsernameLookup(d[1].ToString()), UsernameLookup(d[2].ToString())));
                             query += " OR c_id='" + d[0] + "'";
                         }
                         query += ")";
@@ -155,7 +175,7 @@ namespace NAIM
                             DataRow[] result = messageCheck.Select("c_id = '" + c.cid + "'");
                             foreach (DataRow d in result)
                             {
-                                c.messages.Add(new Message(d[1].ToString(), d[3].ToString(), d[4].ToString()));
+                                c.messages.Add(new Message(d[1].ToString(), UsernameLookup(d[3].ToString()), d[4].ToString()));
                             }
                         }
                         string json = new JavaScriptSerializer().Serialize(conCollection);
