@@ -50,8 +50,9 @@ namespace NAIM_client_test
         {
             try
             {
-                Form1.client.SendMessage(Form1.authenticatedUser, Form1.authenticatedPassword, listBox1.SelectedItem.ToString(), textBox1.Text);
+                Form1.client.SendMessage(Form1.authenticatedUser, Form1.authenticatedPassword, textBox1.Text, listBox1.SelectedItem.ToString());
                 RefreshConvos();
+                listBox1.SelectedIndex = 0;
                 RefreshSelectedConvo();
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
@@ -80,6 +81,7 @@ namespace NAIM_client_test
 
         private void RefreshSelectedConvo()
         {
+            listBox2.Items.Clear();
             if (listBox1.SelectedItem != null && (string)listBox1.SelectedItem != "")
             {
                 Conversation selectedConvo = convoList[listBox1.SelectedIndex];

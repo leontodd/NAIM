@@ -46,6 +46,7 @@ namespace NAIM
             DatabaseInterface db = new DatabaseInterface("credentials.txt");
             TcpClient tcpClient = (TcpClient)client;
             NetworkStream clientStream = tcpClient.GetStream();
+            Console.WriteLine("Inbound connection from " + tcpClient.Client.RemoteEndPoint);
             BinaryReader br = new BinaryReader(clientStream);
             int bytesRead;
             while (true)
