@@ -19,6 +19,7 @@ namespace NAIM_client_test
         public static string authenticatedPassword;
         public Form1()
         {
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit); 
             InitializeComponent();
         }
 
@@ -45,6 +46,11 @@ namespace NAIM_client_test
                 MessageBox.Show("Registered, please log in.");
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
+        static void OnProcessExit(object sender, EventArgs e)
+        {
+            client.Close();
         }
     }
 }

@@ -16,14 +16,17 @@ namespace NAIM
 
         public DatabaseInterface(string credentialsPath)
         {
+            Program.Log(ConsoleColor.Cyan, "Testing database connection...");
             string[] credentials = new string[0];
             try { credentials = File.ReadAllLines(credentialsPath); }
-            catch (Exception ex) { Console.WriteLine("DB credential error"); Console.ReadLine(); Environment.Exit(0); }
+            catch (Exception ex) { Program.Log(ConsoleColor.Red, "Invalid database credentials. Press any key..."); ; Console.ReadLine(); Environment.Exit(0); }
 
             string connectionString;
             connectionString = "SERVER=" + credentials[0] + ";" + "DATABASE=" +
             credentials[1] + ";" + "UID=" + credentials[2] + ";" + "PASSWORD=" + credentials[3] + ";";
             connection = new MySqlConnection(connectionString);
+            OpenConnection();
+            CloseConnection();
         }
 
         private bool OpenConnection()
@@ -35,7 +38,7 @@ namespace NAIM
             }
             catch (MySqlException ex)
             {
-                Console.WriteLine("Error: " + ex.Number + " - " + ex.Message);
+                Program.Log(ConsoleColor.Red, "Database connection could not be established.");
                 return false;
             }
         }
@@ -49,7 +52,7 @@ namespace NAIM
             }
             catch (MySqlException ex)
             {
-                Console.WriteLine("Error: " + ex.Number + " - " + ex.Message);
+                Program.Log(ConsoleColor.Red, "Database connection could not be established.");
                 return false;
             }
         }
@@ -105,6 +108,7 @@ namespace NAIM
             if (usernameCheck == null)
             {
                 ExecuteQuery("INSERT INTO users (username, password, email) VALUES ('" + username + "', '" + password + "', '" + email + "');");
+                Program.Log(ConsoleColor.Green, "User " + username + " has registered succesfully.");
                 return true;
             }
             else { throw new NAIMException("Registration failed, username already exists."); }
@@ -115,6 +119,7 @@ namespace NAIM
             if (Authorise(username, password) != false)
             {
                 ExecuteQuery("DELETE FROM " + "users" + " WHERE " + "username" + "='" + username + "';");
+                Program.Log(ConsoleColor.Green, "User " + username + " has unregistered succesfully.");
                 return true;
             }
             else { throw new NAIMException("Unregistration failed, unable to authorise user."); }
@@ -140,6 +145,7 @@ namespace NAIM
                         }
                         string cid = cidCheck.Rows[0].Field<int>(0).ToString();
                         ExecuteQuery("INSERT INTO messages (content, c_id, u_id) VALUES ('" + content + "', '" + cid + "', '" + uid1 + "');");
+                        Program.Log(ConsoleColor.Green, "Message sent succesfully: " + username + " -> " + reciever);
                         return true;
                     }
                     else { throw new NAIMException("Sending failed, unable to verify recipient."); }
