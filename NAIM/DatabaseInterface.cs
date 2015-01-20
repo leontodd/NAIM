@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Web.Script.Serialization;
+using System.Text.RegularExpressions;
 
 namespace NAIM
 {
@@ -104,14 +105,18 @@ namespace NAIM
 
         public bool RegisterUser(string username, string password, string email)
         {
-            DataTable usernameCheck = ExecuteQuery("SELECT * FROM " + "users" + " WHERE " + "username" + "='" + username + "';");
-            if (usernameCheck == null)
+            if (Regex.IsMatch(email, @"^[^@]+@[^@]+\.[^@]+$"))
             {
-                ExecuteQuery("INSERT INTO users (username, password, email) VALUES ('" + username + "', '" + password + "', '" + email + "');");
-                Program.Log(ConsoleColor.Green, "User " + username + " has registered succesfully.");
-                return true;
+                DataTable usernameCheck = ExecuteQuery("SELECT * FROM " + "users" + " WHERE " + "username" + "='" + username + "';");
+                if (usernameCheck == null)
+                {
+                    ExecuteQuery("INSERT INTO users (username, password, email) VALUES ('" + username + "', '" + password + "', '" + email + "');");
+                    Program.Log(ConsoleColor.Green, "User " + username + " has registered succesfully.");
+                    return true;
+                }
+                else { throw new NAIMException("Registration failed, username already exists."); }
             }
-            else { throw new NAIMException("Registration failed, username already exists."); }
+            else { throw new NAIMException("Invalid email."); }
         }
 
         public bool UnregisterUser(string username, string password)
