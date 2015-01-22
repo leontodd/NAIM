@@ -94,7 +94,7 @@ namespace NAIM_client_test
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Application.Exit(0);
+            Application.Exit(e);
         }
     }
 }
