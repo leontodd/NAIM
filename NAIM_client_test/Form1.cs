@@ -14,7 +14,7 @@ namespace NAIM_client_test
 {
     public partial class Form1 : Form
     {
-        public static ClientInterface client = new ClientInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1997));
+        public static ClientInterface client = new ClientInterface(new IPEndPoint(IPAddress.Parse("192.168.1.137"), 1997));
         public static string authenticatedUser;
         public static string authenticatedPassword;
         public Form1()
