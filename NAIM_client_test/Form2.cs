@@ -13,10 +13,16 @@ namespace NAIM_client_test
 {
     public partial class Form2 : Form
     {
+        private BackgroundWorker bwCheck = new BackgroundWorker();
+        private BackgroundWorker bwSend = new BackgroundWorker();
+
         public static List<Conversation> convoList = new List<Conversation>();
         public Form2()
         {
             InitializeComponent();
+            bwCheck.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(bwCheck_Complete);
+            bwSend.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(bwSend_Complete);
+
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -26,7 +32,7 @@ namespace NAIM_client_test
 
         private void button1_Click(object sender, EventArgs e)
         {
-            RefreshConvos();
+            bwCheck.RunWorkerAsync();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -48,17 +54,22 @@ namespace NAIM_client_test
 
         private void button2_Click(object sender, EventArgs e)
         {
+            bwSend.RunWorkerAsync();
+        }
+
+        private void bwSend_Complete(object sender, RunWorkerCompletedEventArgs e)
+        {
             try
             {
                 Form1.client.SendMessage(Form1.authenticatedUser, Form1.authenticatedPassword, textBox1.Text, listBox1.SelectedItem.ToString());
-                RefreshConvos();
+                bwCheck.RunWorkerAsync();
                 listBox1.SelectedIndex = 0;
                 RefreshSelectedConvo();
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-        private void RefreshConvos()
+        private void bwCheck_Complete(object sender, RunWorkerCompletedEventArgs e)
         {
             listBox1.Items.Clear();
             try

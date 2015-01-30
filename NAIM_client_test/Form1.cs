@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
@@ -17,13 +18,24 @@ namespace NAIM_client_test
         public static ClientInterface client = new ClientInterface(new IPEndPoint(IPAddress.Parse("192.168.1.137"), 1997));
         public static string authenticatedUser;
         public static string authenticatedPassword;
+
+        private BackgroundWorker bwLogin = new BackgroundWorker();
+        private BackgroundWorker bwRegister = new BackgroundWorker();
         public Form1()
         {
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit); 
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
+            bwLogin.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(bwLogin_Complete);
+            bwRegister.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(bwRegister_Complete);
+
             InitializeComponent();
         }
 
         private void button1_Click(object sender, EventArgs e)
+        {
+            bwLogin.RunWorkerAsync();
+        }
+
+        private void bwLogin_Complete(object sender, RunWorkerCompletedEventArgs e)
         {
             try
             {
@@ -39,6 +51,11 @@ namespace NAIM_client_test
         }
 
         private void button2_Click(object sender, EventArgs e)
+        {
+            bwRegister.RunWorkerAsync();
+        }
+
+        private void bwRegister_Complete(object sender, RunWorkerCompletedEventArgs e)
         {
             try
             {
